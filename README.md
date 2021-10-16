@@ -1,46 +1,51 @@
-# Getting Started with Create React App
+### Setup
+```shell
+yarn config set ignore-engines true 
+yarn create react-app hello-react --template=typescript
+yarn eject
+yarn upgrade -R eslint 
+# Prettier
+yarn add eslint-config-prettier@8.3.0 eslint-plugin-prettier@4.0.0 prettier@2.3.2
+```
+- Add `.prettierrc`, `.eslintrc.json`, `.eslintignore` 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+`Eslint` is already added: 
+- https://github.com/facebook/create-react-app/blob/main/packages/eslint-config-react-app/package.json
+- https://github.com/facebook/create-react-app/blob/main/packages/react-scripts/package.json#L46
 
-## Available Scripts
+```json
+{
+  "@typescript-eslint/eslint-plugin": "^4.30.0",
+  "@typescript-eslint/parser": "^4.30.0",
+  "babel-eslint": "^10.1.0",
+  "eslint": "^7.32.0",
+  "eslint-config-react-app": "^6.0.0",
+  "eslint-plugin-flowtype": "^5.2.0",
+  "eslint-plugin-import": "^2.22.1",
+  "eslint-plugin-jest": "^24.1.0",
+  "eslint-plugin-jsx-a11y": "^6.3.1",
+  "eslint-plugin-react": "^7.21.5",
+  "eslint-plugin-react-hooks": "^4.2.0",
+  "eslint-plugin-testing-library": "^3.9.2",
+  "eslint-webpack-plugin": "^2.5.2",
+  
+  "eslint-plugin-prettier": "4.0.0",
+  "eslint-config-prettier": "8.3.0",
+  "prettier": "2.3.2"
+}
+```
+![](prettier.png)
 
-In the project directory, you can run:
-
-### `yarn start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Eslint and Prettier
+- Eslint is linter prettier is formatter
+- eslint-config-prettier : Turn off Eslint rules that is conflict with Prettier
+- eslint-plugin-prettier : Integrate Prettier rules into Eslint rules
+```json
+{
+  "extends": ["prettier"],
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": ["error"]
+  }
+}
+```
