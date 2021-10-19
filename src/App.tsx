@@ -6,6 +6,7 @@ import ThemeToggle from './ThemeToggle';
 import ThemeDisplay from './ThemeDisplay';
 import { ThemeProvider } from './ThemeProvider';
 import CountDisplay from './CountDisplay';
+import UseRef from './components/use-ref/UseRef';
 
 function App() {
   console.log('App render');
@@ -49,6 +50,9 @@ function App() {
           <ThemeDisplay onClick={handleThemDisplayOnClick} />
           {loading && <label>Loading....</label>}
         </header>
+        <section>
+          <UseRef />
+        </section>
       </div>
     </ThemeProvider>
   );
