@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Button from './Button';
@@ -7,9 +7,22 @@ import ThemeDisplay from './ThemeDisplay';
 import { ThemeProvider } from './ThemeProvider';
 import CountDisplay from './CountDisplay';
 import UseRef from './components/use-ref/UseRef';
+import { useAppDispatch } from './app/hooks';
+import { incrementAsync } from './features/counter/counterSlice';
 
 function App() {
   console.log('App render');
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    async function login() {
+      const result = await dispatch(incrementAsync(1));
+      console.log(result);
+    }
+
+    login();
+  }, []);
 
   const [loading, setLoading] = useState(false);
   const [count, setCount] = useState(0);

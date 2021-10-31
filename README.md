@@ -7,6 +7,9 @@ yarn eject
 yarn upgrade -R eslint 
 # Prettier
 yarn add eslint-config-prettier@8.3.0 eslint-plugin-prettier@4.0.0 prettier@2.3.2
+# Redux toolkit
+yarn add @reduxjs/toolkit@1.5.1 @types/react-redux@7.1.7 react-redux@7.2.0 axios@0.24.0
+yarn create react-app my-app --template redux-typescript
 ```
 
 - Add `.prettierrc`, `.eslintrc.json`, `.eslintignore`
