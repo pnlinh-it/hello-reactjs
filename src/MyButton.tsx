@@ -5,8 +5,8 @@ interface Props {
   onClick: () => void;
 }
 
-function Button(props: Props) {
+function MyButton(props: Props) {
   console.log('Button re-render');
   return <button onClick={props.onClick}>{props.content}a</button>;
 }
-export default React.memo(Button);
+export default React.memo(MyButton);
