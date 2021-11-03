@@ -8,8 +8,8 @@ import { ThemeProvider } from './ThemeProvider';
 import CountDisplay from './CountDisplay';
 import UseRef from './components/use-ref/UseRef';
 import { useAppDispatch } from './app/hooks';
-import { incrementAsync } from './features/counter/counterSlice';
 import Login from './pages/login/Login';
+import { incrementAsync } from './features/auth/authSlice';
 
 function App() {
   console.log('App render');
@@ -23,7 +23,7 @@ function App() {
     }
 
     login();
-  }, []);
+  }, [dispatch]);
 
   const [loading, setLoading] = useState(false);
   const [count, setCount] = useState(0);
