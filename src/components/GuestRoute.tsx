@@ -14,7 +14,6 @@ const GuestRoute = function ({ component, children, ...rest }: Props) {
         if (!isLogin) {
           return component ? React.createElement(component, props) : children;
         }
-
         return <Redirect to="/" />;
       }}
     />
