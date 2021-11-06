@@ -1,51 +1,63 @@
-import React, { useState } from 'react';
-import { Button, Checkbox, Col, Form, Input, Row, Tabs } from 'antd';
+import React, { useEffect } from 'react';
+import { Button, Col, Divider, Form, Input, message, Row, Tabs } from 'antd';
 import AuthLayout from '../../layouts/AuthLayout';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { GoogleOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import './Login.less';
+import { Link, useHistory } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { login } from '../../features/auth/authSlice';
+import { ApiStatus } from '../../common/api/ApiStatus';
+import { googleRedirectUrl } from '../../features/auth/googleAuthSlice';
 
-export declare interface FormDataType {
-  usernameOrEmail: string;
+export declare interface FormData {
+  email: string;
   password: string;
-  remember: boolean;
 }
 
+const rules = {
+  email: [{ required: true, message: 'Please input your username or email!' }],
+  password: [{ required: true, message: 'Please input your password!' }],
+};
+
 export default function Login() {
+  const dispatch = useAppDispatch();
+  const history = useHistory();
+
   const [form] = Form.useForm();
+  const authState = useAppSelector((state) => state.auth);
+  const googleState = useAppSelector((state) => state.googleAuth);
 
-  const [isSigning, setIsSigning] = useState(false);
+  useEffect(() => {
+    if (authState.error) {
+      message.destroy();
+      message.error(authState.error);
+    }
+  }, [authState.error]);
 
-  const onSubmit = (values: FormDataType): void => {
-    const isEmail = /\S+@\S+\.\S+/.test(values.usernameOrEmail);
-    setIsSigning(true);
-    setTimeout(() => {
-      setIsSigning(false);
-    }, 3000);
+  useEffect(() => {
+    if (googleState.error) {
+      message.destroy();
+      message.error(googleState.error);
+    }
+  }, [googleState.error]);
 
-    // signIn({
-    //   ...(isEmail ? { email: values.usernameOrEmail } : { username: values.usernameOrEmail }),
-    //   rememberMe: values.remember ? true : false,
-    //   password: values.password,
-    // })
-    //   .then(async (res) => {
-    //     await dispatch({
-    //       type: SET_ACCESS_TOKEN,
-    //       token: res.data.attributes.access_token,
-    //     });
-    //     delete res.data.attributes.access_token;
-    //
-    //     await dispatch({
-    //       type: SIGN_IN,
-    //       user: res.data,
-    //     });
-    //
-    //     router.push('/');
-    //   })
-    //   .catch((error) => {
-    //     setIsSigning(false);
-    //     message.error(error.response.data.message, 5);
-    //   });
+  useEffect(() => {
+    if (authState.isLogin) {
+      history.replace('/');
+    }
+  }, [authState.isLogin, history]);
+
+  const onSubmit = (values: FormData): void => {
+    dispatch(login(values));
   };
+
+  async function onGetGoogleRedirect() {
+    const resultAction = await dispatch(googleRedirectUrl());
+    if (googleRedirectUrl.fulfilled.match(resultAction)) {
+      const { url } = resultAction.payload;
+      window.location.href = url;
+    }
+  }
 
   return (
     <AuthLayout>
@@ -53,55 +65,51 @@ export default function Login() {
         <Form form={form} name="sign-in" onFinish={onSubmit} size="middle" scrollToFirstError>
           <Tabs>
             <Tabs.TabPane key="sign-in" tab="Sign In">
-              <Form.Item
-                name="usernameOrEmail"
-                rules={[{ required: true, message: 'Please input your username or email!' }]}
-              >
+              <Form.Item name="email" rules={rules.email}>
                 <Input
-                  prefix={<UserOutlined style={{ color: '#717171' }} />}
-                  placeholder="Username or Email"
+                  prefix={<UserOutlined className={'input-prefix-icon'} />}
+                  placeholder="Email"
                 />
               </Form.Item>
 
-              <Form.Item
-                name="password"
-                rules={[{ required: true, message: 'Please input your password!' }]}
-              >
+              <Form.Item name="password" rules={rules.password}>
                 <Input.Password
-                  prefix={<LockOutlined style={{ color: '#717171' }} />}
+                  prefix={<LockOutlined className={'input-prefix-icon'} />}
                   placeholder="Password"
                 />
               </Form.Item>
 
-              <Row>
+              <Row justify="space-between">
                 <Col span={12}>
-                  <Form.Item name="remember" valuePropName="checked">
-                    <Checkbox>Remember me</Checkbox>
+                  <Form.Item>
+                    <Button
+                      loading={authState.status === 'loading'}
+                      block
+                      type="primary"
+                      htmlType="submit"
+                    >
+                      Sign In
+                    </Button>
                   </Form.Item>
                 </Col>
-                <Col span={12}>
-                  <Form.Item style={{ float: 'right' }}>
-                    <a href="/auth/sign-in/forgot-password">
-                      <a style={{ color: '#d60d17' }}>Forgot Password</a>
-                    </a>
+                <Col>
+                  <Form.Item>
+                    <Link to="/auth/password/forget"> Forget password</Link>
                   </Form.Item>
                 </Col>
               </Row>
 
-              <Form.Item>
+              <Divider>Or connect with</Divider>
+
+              <div style={{ textAlign: 'center' }}>
                 <Button
-                  loading={isSigning}
-                  className={'submit'}
+                  loading={googleState.status === ApiStatus.LOADING}
+                  onClick={onGetGoogleRedirect}
+                  shape="circle"
+                  icon={<GoogleOutlined />}
                   size="large"
-                  type="primary"
-                  htmlType="submit"
-                >
-                  Sign In
-                </Button>
-                <a href="/auth/sign-up">
-                  <a className={'register'}>Create an Account</a>
-                </a>
-              </Form.Item>
+                />
+              </div>
             </Tabs.TabPane>
           </Tabs>
         </Form>

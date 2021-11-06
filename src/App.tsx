@@ -1,78 +1,59 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import logo from './logo.svg';
+import React from 'react';
 import './App.less';
-import MyButton from './MyButton';
-import ThemeToggle from './ThemeToggle';
-import ThemeDisplay from './ThemeDisplay';
 import { ThemeProvider } from './ThemeProvider';
-import CountDisplay from './CountDisplay';
-import UseRef from './components/use-ref/UseRef';
-import { useAppDispatch } from './app/hooks';
+import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom';
+import AppList from './features/apps/AppList';
+import UserProfile from './features/profile/UserProfile';
+import GuestRoute from './components/GuestRoute';
 import Login from './pages/login/Login';
-import { incrementAsync } from './features/auth/authSlice';
+import PrivateRoute from './components/PrivateRoute';
+import TestComponent from './features/test/TestComponent';
+import LoginGoogleCallback from './features/auth/LoginGoogleCallback';
 
-function App() {
-  console.log('App render');
-
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    async function login() {
-      const result = await dispatch(incrementAsync(1));
-      console.log(result);
-    }
-
-    login();
-  }, [dispatch]);
-
-  const [loading, setLoading] = useState(false);
-  const [count, setCount] = useState(0);
-
-  const handleClick = useCallback(() => {
-    setLoading(!loading);
-  }, [loading]);
-
-  // const handleClick = () => {
-  //   setLoading(!loading);
-  // };
-
-  const handleThemDisplayOnClick = useCallback(() => {
-    console.log('handleThemDisplayOnClick');
-  }, []);
-
+export default function App() {
   return (
     <ThemeProvider>
-      <div hidden>
-        <input value={count} onChange={(event) => setCount(+event.target.value)} />
-        <CountDisplay onClick={handleClick} />
+      <Router>
+        <div>
+          <nav hidden>
+            <ul>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/apps">Apps List</Link>
+              </li>
+              <li>
+                <Link to="/profile">Profile</Link>
+              </li>
+              <li>
+                <Link to="/user">User</Link>
+              </li>
+            </ul>
+          </nav>
 
-        <div className="App">
-          <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>
-              Edit <code>src/App.tsx</code> and save to reload.
-            </p>
-            <a
-              className="App-link"
-              href="https://reactjs.org"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn React
-            </a>
-            <MyButton content="Alert" onClick={handleClick} />
-            <ThemeToggle />
-            <ThemeDisplay onClick={handleThemDisplayOnClick} />
-            {loading && <label>Loading....</label>}
-          </header>
-          <section>
-            <UseRef />
-          </section>
+          <Switch>
+            <Route path="/apps">
+              <AppList />
+            </Route>
+            <Route path="/profile">
+              <UserProfile />
+            </Route>
+            <GuestRoute path="/login">
+              <Login />
+            </GuestRoute>
+            <PrivateRoute component={() => <h1>From component</h1>} path="/user">
+              <h1>From Children</h1>
+            </PrivateRoute>
+            <GuestRoute path="/auth/google/callback">
+              <LoginGoogleCallback />
+            </GuestRoute>
+            <PrivateRoute path="/">
+              <TestComponent />
+            </PrivateRoute>
+          </Switch>
         </div>
-      </div>
-      <Login />
+      </Router>
     </ThemeProvider>
   );
 }
-
-export default App;

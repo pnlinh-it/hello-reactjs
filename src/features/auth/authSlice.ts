@@ -1,94 +1,97 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createSlice,
+  isFulfilled,
+  isPending,
+  isRejected,
+} from '@reduxjs/toolkit';
 import client from '../../app/axios-base';
-import { AxiosError } from 'axios';
-import { LoginResponse } from '../counter/counterSlice';
+import { parseApiError } from '../../utils/api/error';
+import { ApiStatus } from '../../common/api/ApiStatus';
+import { loginGoogleCallback } from './googleAuthSlice';
+import { STORAGE_KEY_TOKEN } from '../../common/constant';
 
 export interface AuthState {
-  status: string;
+  status: ApiStatus;
   isLogin: boolean;
   user: UserSate;
+  error: string;
 }
 
 export interface UserSate {
   id: number;
   name: string;
-  username: string;
   avatar: string;
 }
 
-const token = localStorage.getItem('token');
+const token = localStorage.getItem(STORAGE_KEY_TOKEN);
 
 const initialState: AuthState = {
-  status: 'idle',
+  status: ApiStatus.IDLE,
   isLogin: !!token,
   user: {
     id: 0,
     name: '',
-    username: '',
     avatar: '',
   },
+  error: '',
 };
 
-// The function below is called a thunk and allows us to perform async logic. It
-// can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
-// will call the thunk with the `dispatch` function as the first argument. Async
-// code can then be executed and other actions can be dispatched. Thunks are
-// typically used to make async requests.
-// https://stackoverflow.com/a/62368375/14284081
-// https://blog.bitsrc.io/simplifying-redux-with-redux-toolkit-6236c28cdfcb
-export const incrementAsync = createAsyncThunk<number, number>(
-  'counter/fetchCount',
-  async (amount: number, thunkApi) => {
-    //const response = await fetchCount(amount);
-    //const data = await fetch('https://keyon.edu.vn/api/quizzes')
-    //const length = JSON.parse(await data.text()).data.length
-    // The value we return becomes the `fulfilled` action payload
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
 
+export interface LoginResponse {
+  id: number;
+  name: string;
+  token: string;
+}
+
+export const login = createAsyncThunk<LoginResponse, LoginRequest>(
+  'auth/login/password',
+  async (loginRequest: LoginRequest, thunkApi) => {
     try {
-      const response = await client.post<LoginResponse>('auth/login', {
-        username: 'pnlinh.it@gmail.com',
-        password: '12121212',
-      });
-      console.log(response);
-    } catch (error: any | AxiosError) {
-      if (!error.response) {
-        throw error;
-      }
-      console.log(error.response.data);
+      const response = await client.post<LoginResponse>('auth/login/password', loginRequest);
+      const loginResponse = response.data as LoginResponse;
+      localStorage.setItem(STORAGE_KEY_TOKEN, loginResponse.token);
+      return loginResponse;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
     }
-
-    return 1;
-
-    // return client
-    //   .post<LoginResponse>('auth/login', {
-    //     username: '',
-    //     password: ''
-    //   })
-    //   .then(response => response.data)
-    //   .catch(error => thunkApi.rejectWithValue(error))
   },
 );
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state: AuthState) => {
+      state.isLogin = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(incrementAsync.pending, (state, { meta }) => {
-        // state[meta.arg.uid] = {loading: 'pending', 'success': false, message: undefined}
-        state.status = 'loading';
+      .addMatcher(isPending(login, loginGoogleCallback), (state) => {
+        state.error = '';
+        state.isLogin = false;
+        state.status = ApiStatus.LOADING;
       })
-      .addCase(incrementAsync.fulfilled, (state, action) => {
-        // state[action.meta.arg.uid] = {loading: 'done', 'success': true, message: action.payload.error.message}
-        console.log(action.payload);
-        state.status = 'idle';
-        //state.value += action.payload;
+      .addMatcher(isFulfilled(login, loginGoogleCallback), (state, action) => {
+        action.payload.id;
+        state.error = '';
+        state.isLogin = true;
+        state.status = ApiStatus.IDLE;
       })
-      .addCase(incrementAsync.rejected, (state, action) => {
-        console.log(action);
+      .addMatcher(isRejected(login, loginGoogleCallback), (state, action) => {
+        state.isLogin = false;
+        state.status = ApiStatus.IDLE;
+        const apiError = parseApiError(action.payload);
+        state.error = apiError.message;
       });
   },
 });
 
 export default authSlice.reducer;
+
+export const { logout } = authSlice.actions;

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Layout, Typography } from 'antd';
-import logo from '../logo.svg';
+import { Link } from 'react-router-dom';
 import './AuthLayout.less';
 
 type Props = {
@@ -10,23 +9,12 @@ type Props = {
 export default function AuthLayout(props: Props) {
   return (
     <div className={'container'}>
-      <div className={'content'}>
-        <div className={'top'}>
-          <div className={'header'}>
-            <a href="/">
-              <a>
-                <img className={'logo'} src={logo} alt="App Logo" />
-                <span className={'title'}>Feednext</span>
-              </a>
-            </a>
-          </div>
-          <div className={'desc'} />
-        </div>
-        {props.children}
+      <div className={'header'}>
+        <Link to="/">
+          <span className={'title'}>AppHouse</span>
+        </Link>
       </div>
-      <Layout.Footer style={{ background: 'transparent', textAlign: 'center' }}>
-        <Typography.Text>Feednext © 2020. All rights reserved</Typography.Text>
-      </Layout.Footer>
+      {props.children}
     </div>
   );
 }
