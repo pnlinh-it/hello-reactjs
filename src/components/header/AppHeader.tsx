@@ -3,10 +3,12 @@ import {
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  PlusCircleOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Avatar, Dropdown, Layout, Menu } from 'antd';
+import { Avatar, Button, Dropdown, Layout, Menu } from 'antd';
 import './AppHeader.less';
+import FillSpace from '../FillSpace';
 
 interface Props {
   isCollapsed: boolean;
@@ -41,6 +43,10 @@ export default function AppHeader(props: Props) {
   return (
     <Layout.Header className={'app-header'}>
       {makeToggleButton()}
+      <FillSpace />
+      <Button className={'new-button'} icon={<PlusCircleOutlined />} shape="round" type="primary">
+        New
+      </Button>
       <Dropdown overlay={menuHeaderDropdown} placement="bottomRight">
         <span className={'profile'}>
           <Avatar size="small" src="https://pnlinh.me/img/me.jpg" />

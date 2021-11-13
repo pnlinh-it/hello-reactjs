@@ -4,13 +4,16 @@ import './AppLayout.less';
 import AppSidebar from '../components/sidebar/AppSidebar';
 import AppHeader from '../components/header/AppHeader';
 import PrivateRoute from '../components/PrivateRoute';
-import RepositoryList from '../features/apps/RepositoryList';
-import { Switch } from 'react-router-dom';
+import RepositoryList from '../features/repository/RepositoryList';
+import { Switch, useRouteMatch } from 'react-router-dom';
 import UserProfile from '../features/profile/UserProfile';
+import RepositoryDetail from '../features/repository/RepositoryDetail';
 
 const { Content } = Layout;
 
 export default function AppLayout() {
+  const match = useRouteMatch();
+
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const toggleSidebar = () => setIsCollapsed((currentState) => !currentState);
@@ -24,6 +27,9 @@ export default function AppLayout() {
           <Switch>
             <PrivateRoute path="/profile">
               <UserProfile />
+            </PrivateRoute>
+            <PrivateRoute path="/repositories/:repositoryId">
+              <RepositoryDetail />
             </PrivateRoute>
             <PrivateRoute path="/">
               <RepositoryList />
