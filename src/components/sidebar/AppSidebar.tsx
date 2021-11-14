@@ -72,7 +72,7 @@ export default function AppSidebar(prop: Props) {
           margin: 0,
         }}
       >
-        Costek
+        AppHouse
       </h3>
       <Menu selectedKeys={[currentKey]} mode="inline" theme="dark">
         {items.map((item) => (

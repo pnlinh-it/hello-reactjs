@@ -9,6 +9,7 @@ import './RepositoryItem.less';
 export interface Props {
   item: RepositorySate;
 }
+
 export default function RepositoryItem(props: Props) {
   return (
     <List.Item key={props.item.id}>
