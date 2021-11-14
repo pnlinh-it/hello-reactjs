@@ -5,15 +5,13 @@ import AppSidebar from '../components/sidebar/AppSidebar';
 import AppHeader from '../components/header/AppHeader';
 import PrivateRoute from '../components/PrivateRoute';
 import RepositoryList from '../features/repository/RepositoryList';
-import { Switch, useRouteMatch } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 import UserProfile from '../features/profile/UserProfile';
 import RepositoryDetail from '../features/repository/RepositoryDetail';
 
 const { Content } = Layout;
 
 export default function AppLayout() {
-  const match = useRouteMatch();
-
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const toggleSidebar = () => setIsCollapsed((currentState) => !currentState);
