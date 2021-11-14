@@ -64,6 +64,7 @@ export default function AppSidebar(prop: Props) {
     <Sider collapsed={prop.collapse}>
       <h3
         style={{
+          color: 'white',
           paddingLeft: '1rem',
           paddingTop: '1rem',
           fontSize: '1.25rem',
