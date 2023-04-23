@@ -51,7 +51,7 @@ yarn create react-app my-app --template redux-typescript
 - Get currently eslint version: `yarn list eslint`
 
 ```shell
-❯ yarn list eslint                                                                 
+❯ yarn info eslint version
 yarn list v1.22.4
 warning Filtering by arguments is deprecated. Please use the pattern option instead.
 └─ eslint@7.20.0
